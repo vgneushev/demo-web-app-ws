@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Verification Service</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<script language="JavaScript">
+    $(document).ready(function() {
+        var urlParams = new URLSearchParams(location.search);
+        if (urlParams.has('token')) {
+            verifyToken(urlParams.get('token'));
+        }
+    });
+
+    function verifyToken(tokenValue) {
+        $.get('http://' + window.location.hostname + ':8080/users/email-verification', {token: tokenValue})
+        .done(function(response) {
+        document.getElementById('info-result').style.display = 'block';
+            if (response["operationResult"] === "SUCCESS") {
+                document.getElementById('error-result').style.display = 'none';
+                document.getElementById('not-successful-result').style.display = 'none';
+                document.getElementById('successful-result').style.display = 'block';
+            } else if (response["operationResult"] === "ERROR") {
+                document.getElementById('error-result').style.display = 'none';
+                document.getElementById('not-successful-result').style.display = 'block';
+                document.getElementById('successful-result').style.display = 'none';
+            } else {
+                document.getElementById('error-result').style.display = 'block';
+                document.getElementById('not-successful-result').style.display = 'none';
+                document.getElementById('successful-result').style.display = 'none';
+            }
+        });
+    }
+</script>
+<body>
+    <div id="page-title">Email verification page</div>
+    <br/>
+    <div id="info-result" style="display:none">Verification result:</div>
+    <br/>
+    <div id="successful-result" style="display:none">Successful verification</div>
+    <div id="not-successful-result" style="display:none">Verification link has expire</div>
+    <div id="error-result" style="display:none">Verification Error</div>
+</body>
+</html>
